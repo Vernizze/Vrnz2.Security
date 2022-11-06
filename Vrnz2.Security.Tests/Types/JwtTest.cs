@@ -10,7 +10,7 @@ namespace Vrnz2.Security.Tests.Types
     {
         #region Constants
 
-        private const string SigningKey = "SecR3t_JWT_OhYeah!@!";
+        private const string SigningKey = "F01OGKYB6RLGEB47YYBU";
 
         #endregion 
 
@@ -20,9 +20,9 @@ namespace Vrnz2.Security.Tests.Types
         public void CopyJwt_When_PassingAExistingJwtToken_Should_GetAValidNewJwtToken()
         {
             JwtToken param = (
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIaXBzdGVyIEUyRSBUZXN0aW5nIFVzZXIiLCJqdGkiOiJhMjliN2Q1NjUzYWY0ZmQyOTY3YjA2M2I0MjYwMWVjMiIsIlVzZXJJZCI6IjQwODgxNzYiLCJJZE1haW4iOiIxODA0MTYwIiwiVXNlclR5cGUiOiIwIiwiVGltZVpvbmUiOiJBbWVyaWNhL1Nhb19QYXVsbyIsIkxvY2FsZSI6InB0LUJSIiwiZXhwIjoxNjM1NTE5OTMwLCJpc3MiOiJNRVdFQl9UUlVOSyIsImF1ZCI6Ik1FV2ViIn0.PAtH1vyTmyneipGhoXoKUWI5tzq0aZ07yJnyXp40jGM",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJJbmNsdXNpb24gU2NvcmUgQVBJIiwiaXNzIjoiVnJuejIiLCJhdWQiOlsiVnJuejIiLCJWcm56MiBBdXRoIl0sImV4cCI6MTY2Nzc1OTI2MH0.N7cqGtGwHDMjgnSwEx25Ay12JzF5n-GMpaNa81sl7Os",
                 SigningKey);
-            var token = JwtToken.CopyJwt(param, SigningKey, new Dictionary<string, string> { { JwtRegisteredClaimNamesExtended.UserId, "WFNBR_SEDE" } });
+            var token = JwtToken.CopyJwt(param, SigningKey, new Dictionary<string, string> { { "Teste", "Valor Teste" } });
 
             JwtToken xablau = (token.Claims, SigningKey);
 
@@ -36,14 +36,9 @@ namespace Vrnz2.Security.Tests.Types
             // Arrange
             var claims = new Dictionary<string, string>()
             {
-                { JwtRegisteredClaimNames.Sub, "MAG Worker Execution" },
-                { JwtRegisteredClaimNames.Iss, "MAG Worker" },
-                { JwtRegisteredClaimNames.Aud, "MEWEB_TRUNK" },
-                { JwtRegisteredClaimNamesExtended.UserId, "1732437" },
-                { JwtRegisteredClaimNamesExtended.IdMain, "1578459" },
-                { JwtRegisteredClaimNamesExtended.UserType, "0" },
-                { JwtRegisteredClaimNamesExtended.TimeZone, "America/Sao_Paulo" },
-                { JwtRegisteredClaimNamesExtended.Locale, "pt-BR" }
+                { JwtRegisteredClaimNames.Sub, "Inclusion Score API" },
+                { JwtRegisteredClaimNames.Iss, "Vrnz2 Auth" },
+                { JwtRegisteredClaimNames.Aud, "Vrnz2" }
             };
 
             // Act

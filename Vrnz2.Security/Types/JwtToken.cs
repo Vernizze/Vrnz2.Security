@@ -12,19 +12,6 @@ using System.Text;
 
 namespace Vrnz2.Security.Types
 {
-    public struct JwtRegisteredClaimNamesExtended
-    {
-        #region Constants
-
-        public const string UserId = nameof(UserId);
-        public const string IdMain = nameof(IdMain);
-        public const string UserType = nameof(UserType);
-        public const string TimeZone = nameof(TimeZone);
-        public const string Locale = nameof(Locale);
-
-        #endregion
-    }
-
     public struct JwtToken
     {
         #region Atributes
@@ -96,22 +83,15 @@ namespace Vrnz2.Security.Types
 
             JwtToken originalToken = (token.Value, signingKey);
 
-            if (newClaims.IsNotNull())
+            newClaims.SForEach(i =>
             {
-                newClaims.SForEach(i =>
-                {
-                    if (originalToken.Claims.TryGetValue(i.Key, out string _))
-                        originalToken.Claims[i.Key] = i.Value;
-                });
-            }
+                if (originalToken.Claims.TryGetValue(i.Key, out string _))
+                    originalToken.Claims[i.Key] = i.Value;
+                else
+                    originalToken.Claims.Add(i.Key, i.Value);
+            });
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, originalToken.Claims[JwtRegisteredClaimNames.Sub]));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.UserId, originalToken.Claims[JwtRegisteredClaimNamesExtended.UserId]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.IdMain, originalToken.Claims[JwtRegisteredClaimNamesExtended.IdMain]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.UserType, originalToken.Claims[JwtRegisteredClaimNamesExtended.UserType]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.TimeZone, originalToken.Claims[JwtRegisteredClaimNamesExtended.TimeZone]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.Locale, originalToken.Claims[JwtRegisteredClaimNamesExtended.Locale]));
+            originalToken.Claims.SForEach(claimData => claims.Add(new Claim(claimData.Key, claimData.Value)));
 
             var tokenConfiguration = new JwtSecurityToken(
                 originalToken.Claims[JwtRegisteredClaimNames.Aud],
@@ -131,13 +111,7 @@ namespace Vrnz2.Security.Types
             var tokenAudience = claimsData.ContainsKey(JwtRegisteredClaimNames.Aud) ? claimsData[JwtRegisteredClaimNames.Aud] : SecurityAppSettingsHandler.Instance.SecurityAppSettings.TokenAudience;
             var tokenIssuer = claimsData.ContainsKey(JwtRegisteredClaimNames.Iss) ? claimsData[JwtRegisteredClaimNames.Iss] : SecurityAppSettingsHandler.Instance.SecurityAppSettings.TokenIssuer;
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, claimsData[JwtRegisteredClaimNames.Sub]));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.UserId, claimsData[JwtRegisteredClaimNamesExtended.UserId]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.IdMain, claimsData[JwtRegisteredClaimNamesExtended.IdMain]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.UserType, claimsData[JwtRegisteredClaimNamesExtended.UserType]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.TimeZone, claimsData[JwtRegisteredClaimNamesExtended.TimeZone]));
-            claims.Add(new Claim(JwtRegisteredClaimNamesExtended.Locale, claimsData[JwtRegisteredClaimNamesExtended.Locale]));
+            claimsData.SForEach(claimData => claims.Add(new Claim(claimData.Key, claimData.Value)));
 
             var tokenConfiguration = new JwtSecurityToken(
                 tokenAudience,
